@@ -763,6 +763,112 @@ app.get('/sitemap.xml', async (req, res) => {
   }
 });
 
+// ==================== 点赞 API ====================
+
+// 获取文章的点赞数
+app.get('/api/articles/:id/likes', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // 获取点赞总数
+    const [likes] = await db.execute(
+      'SELECT COUNT(*) as count FROM article_likes WHERE article_id = ?',
+      [id]
+    );
+    
+    // 检查当前用户是否已点赞（如果有token）
+    let isLiked = false;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const [userLike] = await db.execute(
+          'SELECT id FROM article_likes WHERE article_id = ? AND user_id = ?',
+          [id, decoded.userId]
+        );
+        isLiked = userLike.length > 0;
+      } catch (err) {
+        // Token无效，忽略
+      }
+    }
+    
+    res.json({ 
+      count: likes[0].count,
+      isLiked 
+    });
+  } catch (error) {
+    console.error('获取点赞数错误:', error);
+    res.status(500).json({ message: '服务器内部错误' });
+  }
+});
+
+// 点赞/取消点赞文章
+app.post('/api/articles/:id/like', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    
+    // 验证文章是否存在
+    const [articles] = await db.execute(
+      'SELECT id FROM articles WHERE id = ? AND status = ?',
+      [id, 'published']
+    );
+    
+    if (articles.length === 0) {
+      return res.status(404).json({ message: '文章不存在' });
+    }
+    
+    // 检查是否已点赞
+    const [existingLike] = await db.execute(
+      'SELECT id FROM article_likes WHERE article_id = ? AND user_id = ?',
+      [id, userId]
+    );
+    
+    if (existingLike.length > 0) {
+      // 已点赞，取消点赞
+      await db.execute(
+        'DELETE FROM article_likes WHERE article_id = ? AND user_id = ?',
+        [id, userId]
+      );
+      
+      // 获取更新后的点赞数
+      const [likes] = await db.execute(
+        'SELECT COUNT(*) as count FROM article_likes WHERE article_id = ?',
+        [id]
+      );
+      
+      res.json({ 
+        message: '取消点赞成功',
+        isLiked: false,
+        count: likes[0].count
+      });
+    } else {
+      // 未点赞，添加点赞
+      await db.execute(
+        'INSERT INTO article_likes (article_id, user_id) VALUES (?, ?)',
+        [id, userId]
+      );
+      
+      // 获取更新后的点赞数
+      const [likes] = await db.execute(
+        'SELECT COUNT(*) as count FROM article_likes WHERE article_id = ?',
+        [id]
+      );
+      
+      res.json({ 
+        message: '点赞成功',
+        isLiked: true,
+        count: likes[0].count
+      });
+    }
+  } catch (error) {
+    console.error('点赞操作错误:', error);
+    res.status(500).json({ message: '服务器内部错误' });
+  }
+});
+
 // 启动服务器
 app.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);

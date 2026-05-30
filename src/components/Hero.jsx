@@ -6,14 +6,22 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import CommentSection from './CommentSection';
 import SEOHead from './SEOHead';
+import { getArticleLikes, likeArticle } from '../api/articles';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 function Hero() {
   const { id } = useParams();
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+  const [likeState, setLikeState] = useState({
+    isLiked: false,
+    count: 0,
+    loading: false
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +48,7 @@ function Hero() {
 
   useEffect(() => {
     fetchArticle();
+    fetchLikes();
   }, [id]);
 
   const fetchArticle = async () => {
@@ -52,6 +61,43 @@ function Hero() {
       console.error('获取文章失败:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchLikes = async () => {
+    try {
+      const likesData = await getArticleLikes(id);
+      setLikeState({
+        isLiked: likesData.isLiked,
+        count: likesData.count,
+        loading: false
+      });
+    } catch (error) {
+      console.error('获取点赞数失败:', error);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user) {
+      alert(t('article.loginToLike'));
+      return;
+    }
+    
+    if (likeState.loading) return;
+    
+    setLikeState(prev => ({ ...prev, loading: true }));
+    
+    try {
+      const result = await likeArticle(id);
+      setLikeState({
+        isLiked: result.isLiked,
+        count: result.count,
+        loading: false
+      });
+    } catch (error) {
+      console.error('点赞操作失败:', error);
+      setLikeState(prev => ({ ...prev, loading: false }));
+      alert(error.message);
     }
   };
 
@@ -295,11 +341,28 @@ function Hero() {
             </div>
           </div>
 
-          <button className="flex items-center gap-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <button 
+            onClick={handleLike}
+            disabled={likeState.loading}
+            className={`flex items-center gap-2 transition-colors duration-300 ${
+              likeState.isLiked 
+                ? 'text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300' 
+                : 'text-stone-400 hover:text-stone-600 dark:hover:text-stone-400'
+            } ${likeState.loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" 
+              fill={likeState.isLiked ? "currentColor" : "none"} 
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
-            <span className="text-sm tracking-wider font-serif">{t('article.like')}</span>
+            <span className="text-sm tracking-wider font-serif">
+              {likeState.isLiked ? t('article.liked') : t('article.like')}
+            </span>
+            {likeState.count > 0 && (
+              <span className="text-xs text-stone-500 dark:text-stone-400">
+                ({likeState.count})
+              </span>
+            )}
           </button>
         </div>
       </div>

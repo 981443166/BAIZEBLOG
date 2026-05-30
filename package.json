@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.cjs",
-    "server:dev": "nodemon server/index.cjs"
+    "server:dev": "nodemon server/index.cjs",
+    "init-likes": "node init-likes.cjs",
+    "test-like": "node test-like.cjs"
   },
   "dependencies": {
     "@uiw/react-md-editor": "^4.1.0",
