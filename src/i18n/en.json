@@ -68,6 +68,8 @@
   },
   "login": {
     "title": "Login",
+    "adminLogin": "Admin Login",
+    "adminLoginDesc": "Only administrator accounts are allowed",
     "email": "Email",
     "password": "Password",
     "loginButton": "Login",
@@ -75,16 +77,6 @@
     "register": "Register",
     "forgotPassword": "Forgot password?",
     "orContinueWith": "Or continue with"
-  },
-  "register": {
-    "title": "Register",
-    "name": "Username",
-    "email": "Email",
-    "password": "Password",
-    "confirmPassword": "Confirm password",
-    "registerButton": "Register",
-    "hasAccount": "Already have an account?",
-    "login": "Login"
   },
   "admin": {
     "title": "Article Management",

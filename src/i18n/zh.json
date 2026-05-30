@@ -68,6 +68,8 @@
   },
   "login": {
     "title": "登录",
+    "adminLogin": "管理员登录",
+    "adminLoginDesc": "仅限管理员账户登录",
     "email": "邮箱",
     "password": "密码",
     "loginButton": "登录",
@@ -75,16 +77,6 @@
     "register": "注册",
     "forgotPassword": "忘记密码？",
     "orContinueWith": "或继续使用"
-  },
-  "register": {
-    "title": "注册",
-    "name": "用户名",
-    "email": "邮箱",
-    "password": "密码",
-    "confirmPassword": "确认密码",
-    "registerButton": "注册",
-    "hasAccount": "已有账号？",
-    "login": "登录"
   },
   "admin": {
     "title": "文章管理",
