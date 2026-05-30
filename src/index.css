@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+/* 基础字体设置 */
+@theme {
+  --font-serif: 'Libre Caslon Text', '方正新书宋', 'FZNewShuSong-Z10S', serif;
+  --font-sans: 'Libre Caslon Text', '方正新书宋', 'FZNewShuSong-Z10S', sans-serif;
+}
+
+/* 暗黑模式配置 - 使用 class 策略 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 确保 Tailwind 工具类生效 */
+@layer base {
+  body {
+    @apply bg-stone-50 text-stone-800;
+  }
+  
+  /* 暗黑模式 */
+  html.dark body {
+    @apply bg-stone-950 text-stone-200;
+  }
+}
+
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+/* 选中文字样式 */
+::selection {
+  background: #d6d3d1;
+  color: #1c1917;
+}
+
+html.dark ::selection {
+  background: #57534e;
+  color: #fafaf9;
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 基础文字渲染优化 */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 链接下划线动画 */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* 文章排版 */
+.prose-elegant {
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
+
+.prose-elegant p {
+  margin-bottom: 1.5em;
+}
+
+.prose-elegant h1,
+.prose-elegant h2,
+.prose-elegant h3,
+.prose-elegant h4 {
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  color: #292524;
+}
+
+.dark .prose-elegant h1,
+.dark .prose-elegant h2,
+.dark .prose-elegant h3,
+.dark .prose-elegant h4 {
+  color: #e7e5e4;
+}
+
+.prose-elegant h2 {
+  font-size: 1.5rem;
+}
+
+.prose-elegant h3 {
+  font-size: 1.25rem;
+}
+
+.prose-elegant ul,
+.prose-elegant ol {
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+}
+
+.prose-elegant li {
+  margin-bottom: 0.5em;
+}
+
+.prose-elegant ul li {
+  list-style-type: disc;
+}
+
+.prose-elegant ol li {
+  list-style-type: decimal;
+}
+
+.prose-elegant blockquote {
+  margin: 2em 0;
+  padding: 1.5em;
+  border-left: 2px solid #d6d3d1;
+  background-color: #fafaf9;
+  font-style: italic;
+}
+
+.dark .prose-elegant blockquote {
+  border-left-color: #57534e;
+  background-color: rgba(28, 25, 23, 0.3);
+}
+
+.prose-elegant code {
+  font-family: monospace;
+  background-color: #f5f5f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.dark .prose-elegant code {
+  background-color: #44403c;
+}
+
+.prose-elegant pre {
+  margin: 2em 0;
+  padding: 1.5em;
+  background-color: #1c1917;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.prose-elegant pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #e7e5e4;
+}
+
+.prose-elegant a {
+  color: #57534e;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dark .prose-elegant a {
+  color: #a8a29e;
+}
+
+.prose-elegant a:hover {
+  color: #292524;
+}
+
+.dark .prose-elegant a:hover {
+  color: #e7e5e4;
+}
+
+.prose-elegant img {
+  max-width: 100%;
+  height: auto;
+  margin: 2em 0;
+  border-radius: 8px;
+}
+
+.prose-elegant hr {
+  margin: 3em 0;
+  border: none;
+  border-top: 1px solid #d6d3d1;
+}
+
+.dark .prose-elegant hr {
+  border-top-color: #44403c;
+}
+
+/* 代码块样式 */
+.prose-elegant pre {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.prose-elegant pre > div {
+  border-radius: 12px !important;
+  margin: 1.5em 0 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.7 !important;
+  /* 使用与页面背景相近的颜色 */
+  background-color: #fafaf9 !important;
+  border: 1px solid #e7e5e4 !important;
+}
+
+.dark .prose-elegant pre > div {
+  background-color: #1c1917 !important;
+  border-color: #292524 !important;
+}
+
+/* 代码高亮覆盖 - 降低对比度 */
+.prose-elegant pre > div code {
+  background: transparent !important;
+}
+
+/* 行号样式 */
+.prose-elegant pre > div .linenumber {
+  color: #a8a29e !important;
+}
+
+.dark .prose-elegant pre > div .linenumber {
+  color: #57534e !important;
+}
+
+.prose-elegant code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+}
+
+.prose-elegant p code {
+  font-size: 0.85em !important;
+  padding: 0.2em 0.4em !important;
+  background-color: #f5f5f4 !important;
+  color: #44403c !important;
+}
+
+.dark .prose-elegant p code {
+  background-color: #292524 !important;
+  color: #d6d3d1 !important;
+}
+
+/* 淡入动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* 延迟动画 */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }

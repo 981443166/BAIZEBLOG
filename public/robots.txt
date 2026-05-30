@@ -1,0 +1,13 @@
+# robots.txt for BaizeBlog
+# https://baizeblog.com
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://baizeblog.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

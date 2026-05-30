@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- 基础 SEO 标签 -->
+    <title>白泽博客 - 技术分享与生活感悟</title>
+    <meta name="description" content="白泽博客是一个专注于技术分享、编程教程和个人感悟的博客平台，提供前端开发、后端技术、数据库等技术文章。" />
+    <meta name="keywords" content="博客,技术分享,编程,前端开发,后端开发,JavaScript,React,Node.js" />
+    <meta name="author" content="白泽" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph 标签 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="白泽博客 - 技术分享与生活感悟" />
+    <meta property="og:description" content="白泽博客是一个专注于技术分享、编程教程和个人感悟的博客平台。" />
+    <meta property="og:url" content="https://baizeblog.com" />
+    <meta property="og:site_name" content="白泽博客" />
+    <meta property="og:locale" content="zh_CN" />
+    
+    <!-- Twitter Card 标签 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="白泽博客 - 技术分享与生活感悟" />
+    <meta name="twitter:description" content="白泽博客是一个专注于技术分享、编程教程和个人感悟的博客平台。" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://baizeblog.com" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <script>
+      // 避免暗黑模式闪烁
+      (function() {
+        const savedMode = localStorage.getItem('darkMode');
+        const isDark = savedMode === 'true' || (savedMode === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
