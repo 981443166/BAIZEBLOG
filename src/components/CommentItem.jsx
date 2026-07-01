@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { useTranslation } from 'react-i18next';
 import { updateComment, deleteComment } from '../api/comments';
 import { translateText } from '../api/translate';
+
+gsap.registerPlugin(useGSAP);
 
 function CommentItem({ comment, articleId, onReply, onDelete, currentUserId, isReply = false }) {
   const { t, i18n } = useTranslation();
@@ -10,6 +13,7 @@ function CommentItem({ comment, articleId, onReply, onDelete, currentUserId, isR
   const [editContent, setEditContent] = useState(comment.content);
   const [submitting, setSubmitting] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
+  const repliesRef = useRef(null);
   
   // 翻译状态
   const [translatedContent, setTranslatedContent] = useState(null);
@@ -19,6 +23,16 @@ function CommentItem({ comment, articleId, onReply, onDelete, currentUserId, isR
 
   const isAuthor = currentUserId === comment.user_id;
   const hasReplies = comment.replies && comment.replies.length > 0;
+
+  // 回复列表展开/收起动画
+  useGSAP(() => {
+    if (repliesRef.current) {
+      gsap.fromTo(repliesRef.current,
+        { height: 0, opacity: 0 },
+        { height: 'auto', opacity: 1, duration: 0.3, ease: 'power2.out' }
+      );
+    }
+  }, { dependencies: [showReplies] });
 
   // 格式化时间
   const formatTime = (dateStr) => {
@@ -244,31 +258,23 @@ function CommentItem({ comment, articleId, onReply, onDelete, currentUserId, isR
                   {showReplies ? t('comments.collapse') : t('comments.expand')} {t('comments.replies', { count: comment.replies.length })}
                 </button>
 
-                <AnimatePresence>
-                  {showReplies && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-2 space-y-0">
-                        {comment.replies.map((reply) => (
-                          <CommentItem
-                            key={reply.id}
-                            comment={reply}
-                            articleId={articleId}
-                            onReply={onReply}
-                            onDelete={onDelete}
-                            currentUserId={currentUserId}
-                            isReply={true}
-                          />
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {showReplies && (
+                  <div ref={repliesRef} className="overflow-hidden">
+                    <div className="mt-2 space-y-0">
+                      {comment.replies.map((reply) => (
+                        <CommentItem
+                          key={reply.id}
+                          comment={reply}
+                          articleId={articleId}
+                          onReply={onReply}
+                          onDelete={onDelete}
+                          currentUserId={currentUserId}
+                          isReply={true}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

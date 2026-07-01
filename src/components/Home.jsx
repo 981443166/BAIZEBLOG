@@ -1,13 +1,24 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import SEOHead from './SEOHead';
+
+gsap.registerPlugin(useGSAP);
 
 function Home() {
   const { t } = useTranslation();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const heroRef = useRef(null);
+  const statsRef = useRef(null);
+  const cardsRef = useRef([]);
+  const quoteRef = useRef(null);
+  const footerRef = useRef(null);
+  const postsRef = useRef(null);
+
 
   useEffect(() => {
     fetchArticles();
@@ -24,6 +35,37 @@ function Home() {
       setLoading(false);
     }
   };
+
+  // Hero 区域入场动画
+  useGSAP(() => {
+    if (heroRef.current) {
+      gsap.from(heroRef.current, { opacity: 0, y: 40, duration: 0.8, ease: 'power2.out' });
+    }
+  }, { scope: heroRef });
+
+  // 文章卡片交错入场 — gsap.set 先隐藏再 gsap.to 展示，避免闪烁
+  useGSAP(() => {
+    if (cardsRef.current.length > 0) {
+      gsap.set(cardsRef.current, { opacity: 0, y: 20 });
+      gsap.to(cardsRef.current, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        delay: 0.3,
+        ease: 'power2.out',
+      });
+    }
+  }, { dependencies: [articles] });
+
+  // 统计分类入场
+  useGSAP(() => {
+    if (statsRef.current) {
+      gsap.from(statsRef.current, { opacity: 0, y: 30, duration: 0.6, delay: 0.4, ease: 'power2.out' });
+    }
+  }, { scope: statsRef });
+
+
 
   // 格式化日期
   const formatDate = (dateStr) => {
@@ -62,12 +104,7 @@ function Home() {
         url="/"
       />
       {/* 顶部欢迎区域 - Hero */}
-      <motion.section
-        className="relative mb-24 overflow-hidden"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-      >
+      <section ref={heroRef} className="relative mb-24 overflow-hidden">
         {/* 背景装饰纹理 */}
         <div className="absolute inset-0 -z-10 opacity-5 dark:opacity-[0.02]">
           <div className="absolute top-0 left-0 w-full h-full"
@@ -98,58 +135,28 @@ function Home() {
         </div>
 
         <div className="max-w-2xl relative">
-          <motion.p
-            className="text-xs tracking-[0.3em] text-stone-400 uppercase mb-8 font-serif"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <p className="text-xs tracking-[0.3em] text-stone-400 uppercase mb-8 font-serif">
             Personal Blog
-          </motion.p>
+          </p>
           
-          <motion.h1
-            className="text-5xl md:text-7xl font-light tracking-wide mb-8 text-stone-900 dark:text-stone-100 leading-[1.1]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
+          <h1 className="text-5xl md:text-7xl font-light tracking-wide mb-8 text-stone-900 dark:text-stone-100 leading-[1.1]">
             <span className="block mb-2">{t('home.welcome').split('白泽的博客')[0]}</span>
             <span className="italic text-stone-700 dark:text-stone-300 relative">
               {t('home.welcome').includes('白泽的博客') ? '白泽的博客' : "Baize's Blog"}
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-stone-400 to-transparent dark:from-stone-600"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              />
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-stone-400 to-transparent dark:from-stone-600" />
             </span>
-          </motion.h1>
+          </h1>
           
-          <motion.div
-            className="w-24 h-px bg-gradient-to-r from-stone-400 via-stone-300 to-transparent dark:from-stone-600 dark:via-stone-700 mb-8"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          />
+          <div className="w-24 h-px bg-gradient-to-r from-stone-400 via-stone-300 to-transparent dark:from-stone-600 dark:via-stone-700 mb-8" />
           
-          <motion.p
-            className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg tracking-wide max-w-lg font-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg tracking-wide max-w-lg font-light">
             {t('home.subtitle')}
-          </motion.p>
+          </p>
         </div>
-      </motion.section>
+      </section>
 
       {/* 统计与分类 */}
-      <motion.section
-        className="mb-20"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-      >
+      <section ref={statsRef} className="mb-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((cat) => (
             <Link
@@ -157,12 +164,7 @@ function Home() {
               to={`/articles?category=${encodeURIComponent(cat.nameKey)}`}
               className="block"
             >
-            <motion.div
-              className="group relative cursor-pointer p-6 border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/50 backdrop-blur-sm transition-all duration-300 hover:border-stone-400 dark:hover:border-stone-600 hover:shadow-lg hover:shadow-stone-200/50 dark:hover:shadow-stone-800/50"
-              whileHover={{ y: -4 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
+            <div className="group relative cursor-pointer p-6 border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/50 backdrop-blur-sm transition-all duration-300 hover:border-stone-400 dark:hover:border-stone-600 hover:shadow-lg hover:shadow-stone-200/50 dark:hover:shadow-stone-800/50 hover:-translate-y-1 active:scale-[0.98]">
               {/* 图标 */}
               <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-4 group-hover:bg-stone-200 dark:group-hover:bg-stone-700 transition-colors duration-300">
                 {cat.nameKey === '设计思考' ? (
@@ -203,19 +205,14 @@ function Home() {
               
               {/* 底部指示条 */}
               <div className="w-0 h-[2px] bg-gradient-to-r from-stone-400 to-stone-200 dark:from-stone-600 dark:to-stone-800 group-hover:w-full transition-all duration-500" />
-            </motion.div>
+            </div>
             </Link>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* 文章列表 */}
-      <motion.section
-        className="mb-20"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-      >
+      <section ref={postsRef} className="mb-20">
         <div className="flex items-center gap-4 mb-12">
           <div className="w-12 h-px bg-stone-300 dark:bg-stone-700" />
           <span className="text-xs tracking-[0.2em] text-stone-400 uppercase font-serif">{t('home.recentPosts')}</span>
@@ -232,13 +229,7 @@ function Home() {
             </div>
           ) : (
             articles.slice(0, 6).map((article, index) => (
-              <motion.div
-                key={article.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.5, delay: 0.1 * index }}
-              >
+              <div key={article.id} ref={el => cardsRef.current[index] = el}>
                 <Link
                   to={`/article/${article.id}`}
                   className="group block h-full"
@@ -305,19 +296,14 @@ function Home() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))
           )}
         </div>
 
         {/* 查看更多 */}
         {articles.length > 6 && (
-          <motion.div
-            className="mt-12 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
+          <div className="mt-12 text-center">
             <Link to="/articles" className="inline-flex items-center gap-3 px-8 py-3 border border-stone-300 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:border-stone-500 dark:hover:border-stone-500 transition-all duration-300 tracking-wider text-sm font-serif">
               {t('home.allPosts')}
               <svg
@@ -335,31 +321,19 @@ function Home() {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </Link>
-          </motion.div>
+          </div>
         )}
-      </motion.section>
+      </section>
 
       {/* 引用区域 */}
-      <motion.section
-        className="mb-20"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
-      >
+      <section ref={quoteRef} className="mb-20">
         <div className="max-w-3xl mx-auto text-center py-20 relative">
           {/* 装饰边框 */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-stone-300 dark:via-stone-700 to-transparent" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-stone-300 dark:via-stone-700 to-transparent" />
           
           {/* 引用图标 */}
-          <motion.div
-            className="w-16 h-16 mx-auto mb-8 text-stone-200 dark:text-stone-800"
-            initial={{ scale: 0.8 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          <div className="w-16 h-16 mx-auto mb-8 text-stone-200 dark:text-stone-800">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="64"
@@ -370,38 +344,20 @@ function Home() {
             >
               <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
             </svg>
-          </motion.div>
+          </div>
           
-          <motion.blockquote
-            className="text-xl md:text-2xl font-light text-stone-700 dark:text-stone-300 leading-relaxed tracking-wide italic mb-8 px-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
+          <blockquote className="text-xl md:text-2xl font-light text-stone-700 dark:text-stone-300 leading-relaxed tracking-wide italic mb-8 px-8">
             "{t('home.quote')}"
-          </motion.blockquote>
+          </blockquote>
           
-          <motion.cite
-            className="text-xs text-stone-400 tracking-[0.2em] uppercase not-italic font-serif"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
+          <cite className="text-xs text-stone-400 tracking-[0.2em] uppercase not-italic font-serif">
             {t('home.quoteAuthor')}
-          </motion.cite>
+          </cite>
         </div>
-      </motion.section>
+      </section>
 
       {/* 页脚 */}
-      <motion.footer
-        className="border-t border-stone-200 dark:border-stone-800 pt-16 pb-12"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
+      <footer ref={footerRef} className="border-t border-stone-200 dark:border-stone-800 pt-16 pb-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
             <p className="text-xs text-stone-400 tracking-wider font-serif mb-2">
@@ -415,7 +371,8 @@ function Home() {
           {/* 社交链接 */}
           <div className="flex items-center gap-6">
             <a
-              href="#"
+              href="https://github.com/981443166"
+              target="_blank" rel="noopener noreferrer"
               className="group flex items-center gap-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:scale-110">
@@ -450,7 +407,7 @@ function Home() {
         
         {/* 底部装饰线 */}
         <div className="mt-12 w-8 h-px bg-stone-200 dark:bg-stone-800 mx-auto" />
-      </motion.footer>
+      </footer>
     </main>
   );
 }

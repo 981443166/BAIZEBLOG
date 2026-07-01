@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { login } from '../api/auth';
 import { useAuth } from '../hooks/useAuth.jsx';
+import AnimatedSection from '../components/AnimatedSection';
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -44,12 +44,7 @@ function LoginPage() {
     <main className="min-h-screen flex items-center justify-center px-6 pt-16">
       <div className="w-full max-w-md">
         {/* 返回首页 */}
-        <motion.div
-          className="mb-12"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
+        <AnimatedSection animation="fadeDown" delay={0.1} className="mb-12">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300 tracking-wider"
@@ -70,44 +65,29 @@ function LoginPage() {
             </svg>
             {t('nav.home')}
           </Link>
-        </motion.div>
+        </AnimatedSection>
 
         {/* 标题 */}
-        <motion.div
-          className="mb-10"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
+        <AnimatedSection animation="fadeUp" delay={0.2} className="mb-10">
           <h1 className="text-3xl font-light tracking-wide text-stone-900 dark:text-stone-100 mb-4">
             {t('login.adminLogin')}
           </h1>
           <p className="text-stone-500 dark:text-stone-400 text-sm tracking-wide">
             {t('login.adminLoginDesc')}
           </p>
-        </motion.div>
+        </AnimatedSection>
 
         {/* 表单 */}
         <form onSubmit={handleSubmit} className="space-y-0">
           {/* 错误提示 */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 'auto' }}
-              transition={{ duration: 0.3 }}
-              className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm tracking-wider overflow-hidden"
-            >
+            <AnimatedSection animation="fadeDown" className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm tracking-wider overflow-hidden">
               {error}
-            </motion.div>
+            </AnimatedSection>
           )}
 
           {/* 邮箱 */}
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
+          <AnimatedSection animation="fadeUp" delay={0.3} className="mb-6">
             <label className="block text-xs text-stone-400 tracking-wider mb-2 uppercase">
               {t('login.email')}
             </label>
@@ -120,15 +100,10 @@ function LoginPage() {
               className="w-full px-4 py-3 text-sm text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 focus:border-stone-400 dark:focus:border-stone-600 outline-none transition-colors duration-300 tracking-wide"
               placeholder="your@email.com"
             />
-          </motion.div>
+          </AnimatedSection>
 
           {/* 密码 */}
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-          >
+          <AnimatedSection animation="fadeUp" delay={0.4} className="mb-6">
             <label className="block text-xs text-stone-400 tracking-wider mb-2 uppercase">
               {t('login.password')}
             </label>
@@ -142,14 +117,10 @@ function LoginPage() {
               className="w-full px-4 py-3 text-sm text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 focus:border-stone-400 dark:focus:border-stone-600 outline-none transition-colors duration-300 tracking-wide"
               placeholder="••••••••"
             />
-          </motion.div>
+          </AnimatedSection>
 
           {/* 提交按钮 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
-          >
+          <AnimatedSection animation="fadeUp" delay={0.5}>
             <button
               type="submit"
               disabled={loading}
@@ -157,20 +128,15 @@ function LoginPage() {
             >
               {loading ? t('common.loading') : t('login.loginButton')}
             </button>
-          </motion.div>
+          </AnimatedSection>
         </form>
 
         {/* 页脚 */}
-        <motion.footer
-          className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-        >
+        <AnimatedSection animation="fadeIn" delay={0.6} className="mt-16 pt-8 border-t border-stone-200 dark:border-stone-800">
           <p className="text-xs text-stone-400 text-center tracking-wider">
             {t('footer.copyright')}. All rights reserved.
           </p>
-        </motion.footer>
+        </AnimatedSection>
       </div>
     </main>
   );

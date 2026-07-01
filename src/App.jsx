@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { AuthProvider } from './hooks/useAuth.jsx';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
@@ -11,6 +12,8 @@ import AdminPage from './pages/AdminPage';
 import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+
+gsap.registerPlugin(useGSAP);
 
 // 滚动到顶部组件
 function ScrollToTop() {
@@ -23,23 +26,22 @@ function ScrollToTop() {
 
 // 页面过渡动画包装器
 function PageTransition({ children }) {
+  const containerRef = useRef(null);
   const location = useLocation();
 
+  useGSAP(() => {
+    if (containerRef.current) {
+      gsap.fromTo(containerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }, { dependencies: [location.pathname], scope: containerRef });
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{
-          duration: 0.4,
-          ease: [0.25, 0.1, 0.25, 1],
-        }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div ref={containerRef}>
+      {children}
+    </div>
   );
 }
 

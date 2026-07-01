@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { getComments, addComment } from '../api/comments';
 import CommentItem from './CommentItem';
+
+gsap.registerPlugin(useGSAP);
 
 function CommentSection({ articleId }) {
   const { t } = useTranslation();
@@ -14,11 +17,33 @@ function CommentSection({ articleId }) {
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
   const [replyTo, setReplyTo] = useState(null);
+  const replyRef = useRef(null);
+  const commentRefs = useRef([]);
 
   // 获取评论
   useEffect(() => {
     fetchComments();
   }, [articleId]);
+
+  // 回复提示动画
+  useGSAP(() => {
+    if (replyRef.current) {
+      gsap.from(replyRef.current, { opacity: 0, y: -10, duration: 0.3, ease: 'power2.out' });
+    }
+  }, { dependencies: [replyTo], scope: replyRef });
+
+  // 评论列表交错入场
+  useGSAP(() => {
+    if (commentRefs.current.length > 0) {
+      gsap.from(commentRefs.current, {
+        opacity: 0,
+        y: 20,
+        stagger: 0.05,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    }
+  }, { dependencies: [comments.length] });
 
   const fetchComments = async () => {
     try {
@@ -54,7 +79,6 @@ function CommentSection({ articleId }) {
       
       // 更新评论列表
       if (replyTo) {
-        // 如果是回复，添加到父评论的replies中
         setComments(prev => prev.map(comment => {
           if (comment.id === replyTo.id) {
             return {
@@ -65,7 +89,6 @@ function CommentSection({ articleId }) {
           return comment;
         }));
       } else {
-        // 如果是新评论，添加到列表开头
         setComments(prev => [newComment, ...prev]);
       }
 
@@ -83,7 +106,6 @@ function CommentSection({ articleId }) {
   const handleReply = (comment) => {
     setReplyTo(comment);
     setContent('');
-    // 滚动到评论表单
     document.getElementById('comment-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -96,7 +118,6 @@ function CommentSection({ articleId }) {
   // 删除评论
   const handleDelete = (commentId, parentId) => {
     if (parentId) {
-      // 删除子评论
       setComments(prev => prev.map(comment => {
         if (comment.id === parentId) {
           return {
@@ -107,7 +128,6 @@ function CommentSection({ articleId }) {
         return comment;
       }));
     } else {
-      // 删除主评论
       setComments(prev => prev.filter(comment => comment.id !== commentId));
     }
   };
@@ -134,25 +154,18 @@ function CommentSection({ articleId }) {
         {user ? (
           <form onSubmit={handleSubmit}>
             {/* 回复提示 */}
-            <AnimatePresence>
-              {replyTo && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mb-4 flex items-center gap-2 text-sm text-stone-500"
+            {replyTo && (
+              <div ref={replyRef} className="mb-4 flex items-center gap-2 text-sm text-stone-500">
+                <span>{t('comments.replyTo')} {replyTo.user_name}：</span>
+                <button
+                  type="button"
+                  onClick={cancelReply}
+                  className="text-stone-400 hover:text-stone-600 transition-colors"
                 >
-                  <span>{t('comments.replyTo')} {replyTo.user_name}：</span>
-                  <button
-                    type="button"
-                    onClick={cancelReply}
-                    className="text-stone-400 hover:text-stone-600 transition-colors"
-                  >
-                    {t('comments.cancelReply')}
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {t('comments.cancelReply')}
+                </button>
+              </div>
+            )}
 
             {/* 用户头像和输入框 */}
             <div className="flex gap-4">
@@ -216,24 +229,17 @@ function CommentSection({ articleId }) {
         </div>
       ) : comments.length > 0 ? (
         <div className="space-y-0">
-          <AnimatePresence>
-            {comments.map((comment, index) => (
-              <motion.div
-                key={comment.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <CommentItem
-                  comment={comment}
-                  articleId={articleId}
-                  onReply={handleReply}
-                  onDelete={handleDelete}
-                  currentUserId={user?.id}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {comments.map((comment, index) => (
+            <div key={comment.id} ref={el => commentRefs.current[index] = el}>
+              <CommentItem
+                comment={comment}
+                articleId={articleId}
+                onReply={handleReply}
+                onDelete={handleDelete}
+                currentUserId={user?.id}
+              />
+            </div>
+          ))}
         </div>
       ) : (
         <div className="text-center py-12">

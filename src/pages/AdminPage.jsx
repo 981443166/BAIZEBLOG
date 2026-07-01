@@ -290,12 +290,12 @@ function AdminPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 whitespace-nowrap">
                         {article.category}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs ${
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs whitespace-nowrap ${
                         article.status === 'published'
                           ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
                           : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'

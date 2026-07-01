@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth.jsx';
+import AnimatedSection from '../components/AnimatedSection';
 import SEOHead from '../components/SEOHead';
 
 function SettingsPage() {
@@ -80,26 +80,12 @@ function SettingsPage() {
     );
   }
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, delay: i * 0.1, ease: [0.25, 0.1, 0.25, 1] },
-    }),
-  };
-
   return (
     <main className="max-w-3xl mx-auto px-6 pt-24 pb-16">
       <SEOHead title={t('settings.title')} />
 
       {/* 页面头部 */}
-      <motion.header
-        className="mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <AnimatedSection animation="fadeUp" className="mb-12">
         <p className="text-xs tracking-[0.3em] text-stone-400 uppercase mb-6 font-serif">
           Settings
         </p>
@@ -107,28 +93,17 @@ function SettingsPage() {
           {t('settings.title')}
         </h1>
         <div className="w-16 h-px bg-stone-300 dark:bg-stone-700" />
-      </motion.header>
+      </AnimatedSection>
 
       {/* 保存成功提示 */}
       {success && (
-        <motion.div
-          className="mb-6 px-4 py-3 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 text-sm tracking-wide"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-        >
+        <AnimatedSection animation="fadeDown" className="mb-6 px-4 py-3 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 text-sm tracking-wide">
           {success}
-        </motion.div>
+        </AnimatedSection>
       )}
 
       {/* 外观设置 */}
-      <motion.section
-        className="mb-10"
-        custom={0}
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-      >
+      <AnimatedSection animation="fadeUp" delay={0.1} className="mb-10">
         <h2 className="text-xs tracking-[0.2em] text-stone-400 uppercase mb-4 font-serif">
           {t('settings.appearance')}
         </h2>
@@ -177,16 +152,10 @@ function SettingsPage() {
             </button>
           </div>
         </div>
-      </motion.section>
+      </AnimatedSection>
 
       {/* 通知设置 */}
-      <motion.section
-        className="mb-10"
-        custom={1}
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-      >
+      <AnimatedSection animation="fadeUp" delay={0.2} className="mb-10">
         <h2 className="text-xs tracking-[0.2em] text-stone-400 uppercase mb-4 font-serif">
           {t('settings.notifications')}
         </h2>
@@ -269,16 +238,10 @@ function SettingsPage() {
             </button>
           </div>
         </div>
-      </motion.section>
+      </AnimatedSection>
 
       {/* 账户安全 */}
-      <motion.section
-        className="mb-10"
-        custom={2}
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-      >
+      <AnimatedSection animation="fadeUp" delay={0.3} className="mb-10">
         <h2 className="text-xs tracking-[0.2em] text-stone-400 uppercase mb-4 font-serif">
           {t('settings.accountSecurity')}
         </h2>
@@ -343,15 +306,10 @@ function SettingsPage() {
             </svg>
           </Link>
         </div>
-      </motion.section>
+      </AnimatedSection>
 
       {/* 关于 */}
-      <motion.section
-        custom={3}
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-      >
+      <AnimatedSection animation="fadeUp" delay={0.4}>
         <h2 className="text-xs tracking-[0.2em] text-stone-400 uppercase mb-4 font-serif">
           {t('settings.about')}
         </h2>
@@ -370,7 +328,7 @@ function SettingsPage() {
             </span>
           </div>
         </div>
-      </motion.section>
+      </AnimatedSection>
 
       {/* 底部装饰 */}
       <div className="mt-16 w-8 h-px bg-stone-200 dark:bg-stone-800 mx-auto" />

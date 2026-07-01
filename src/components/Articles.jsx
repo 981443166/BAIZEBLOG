@@ -182,7 +182,7 @@ function Articles() {
             </p>
           </div>
           <div className="flex items-center gap-8">
-            <a href="#" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300 tracking-wider font-serif">
+            <a href="https://github.com/981443166" target="_blank" rel="noopener noreferrer" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300 tracking-wider font-serif">
               GitHub
             </a>
             <a href="#" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300 tracking-wider font-serif">

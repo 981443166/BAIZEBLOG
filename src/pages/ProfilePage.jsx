@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { updateProfile, changePassword } from '../api/auth';
+import AnimatedSection from '../components/AnimatedSection';
 
 function ProfilePage() {
   const { user, setUser, loading: authLoading } = useAuth();
@@ -133,27 +133,17 @@ function ProfilePage() {
     <main className="min-h-screen bg-stone-50 dark:bg-stone-950 pt-24 pb-16">
       <div className="max-w-2xl mx-auto px-6">
         {/* 页面标题 */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
-        >
+        <AnimatedSection animation="fadeDown" className="mb-10">
           <h1 className="text-3xl font-light tracking-wide text-stone-900 dark:text-stone-100 mb-2">
             个人资料
           </h1>
           <p className="text-stone-500 dark:text-stone-400 text-sm tracking-wide">
             管理你的账户信息和安全设置
           </p>
-        </motion.div>
+        </AnimatedSection>
 
         {/* 选项卡 */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex gap-1 p-1 bg-stone-100 dark:bg-stone-900 rounded-lg mb-8"
-        >
+        <AnimatedSection animation="fadeDown" delay={0.1} className="flex gap-1 p-1 bg-stone-100 dark:bg-stone-900 rounded-lg mb-8">
           <button
             onClick={() => {
               setActiveTab('profile');
@@ -182,30 +172,22 @@ function ProfilePage() {
           >
             修改密码
           </button>
-        </motion.div>
+        </AnimatedSection>
 
         {/* 成功/错误提示 */}
         {(success || error) && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mb-6 p-4 rounded-lg text-sm tracking-wider ${
-              success
-                ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400'
-                : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400'
-            }`}
-          >
+          <AnimatedSection animation="fadeDown" className={`mb-6 p-4 rounded-lg text-sm tracking-wider ${
+            success
+              ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400'
+              : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400'
+          }`}>
             {success || error}
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* 个人资料表单 */}
         {activeTab === 'profile' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
+          <AnimatedSection animation="fadeUp">
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* 头像预览 */}
               <div className="flex items-center gap-6">
@@ -300,16 +282,12 @@ function ProfilePage() {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* 修改密码表单 */}
         {activeTab === 'password' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
+          <AnimatedSection animation="fadeUp">
             <form onSubmit={handlePasswordSubmit} className="space-y-6">
               {/* 当前密码 */}
               <div>
@@ -373,23 +351,18 @@ function ProfilePage() {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </AnimatedSection>
         )}
 
         {/* 返回首页 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-12 text-center"
-        >
+        <AnimatedSection animation="fadeIn" delay={0.3} className="mt-12 text-center">
           <button
             onClick={() => navigate('/')}
             className="text-sm text-stone-400 hover:text-stone-600 dark:hover:text-stone-400 transition-colors duration-300 tracking-wider"
           >
             ← 返回首页
           </button>
-        </motion.div>
+        </AnimatedSection>
       </div>
     </main>
   );
