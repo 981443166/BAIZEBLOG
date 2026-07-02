@@ -171,7 +171,7 @@ function CommentSection({ articleId }) {
             <div className="flex gap-4">
               <div className="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-800 flex items-center justify-center shrink-0">
                 {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                  <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" loading="lazy" />
                 ) : (
                   <span className="text-sm font-serif text-stone-500">
                     {user.name?.[0] || '用'}

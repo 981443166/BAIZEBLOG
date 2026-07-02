@@ -226,50 +226,53 @@ function Hero() {
 
       {/* 文章内容 */}
       <article className="prose-elegant animate-fade-in-up delay-100">
-        <div className="text-stone-600 dark:text-stone-400 leading-[1.8] text-base tracking-wide">
-          <ReactMarkdown
-            components={{
-              code({ node, inline, className, children, ...props }) {
-                const match = /language-(\w+)/.exec(className || '');
-                
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    style={isDark ? vscDarkPlus : vs}
-                    language={match[1]}
-                    PreTag="div"
-                    className="rounded-lg my-4 text-sm"
-                    showLineNumbers
-                    lineNumberStyle={{ 
-                      fontSize: '0.75rem',
-                      minWidth: '2.5em',
-                      paddingRight: '1em'
-                    }}
-                    customStyle={{
-                      border: `1px solid ${isDark ? '#292524' : '#e7e5e4'}`,
-                      borderRadius: '12px',
-                      padding: '1.5em',
-                      margin: '1.5em 0',
-                      fontSize: '0.875rem',
-                      lineHeight: '1.7'
-                    }}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code className="bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded text-sm font-mono text-stone-700 dark:text-stone-300" {...props}>
-                    {children}
-                  </code>
-                );
-              },
-              pre({ children }) {
-                return <>{children}</>;
-              }
-            }}
-          >
-            {article.content || t('article.noContent')}
-          </ReactMarkdown>
-        </div>
+        {article.content ? (
+          <div className="text-stone-600 dark:text-stone-400 leading-[1.8] text-base tracking-wide">
+            <ReactMarkdown
+              components={{
+                code({ className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  
+                  return match ? (
+                    <SyntaxHighlighter
+                      style={isDark ? vscDarkPlus : vs}
+                      language={match[1]}
+                      PreTag="div"
+                      className="rounded-lg my-4 text-sm"
+                      showLineNumbers
+                      lineNumberStyle={{ 
+                        fontSize: '0.75rem',
+                        minWidth: '2.5em',
+                        paddingRight: '1em'
+                      }}
+                      customStyle={{
+                        border: `1px solid ${isDark ? '#292524' : '#e7e5e4'}`,
+                        borderRadius: '12px',
+                        padding: '1.5em',
+                        margin: '1.5em 0',
+                        fontSize: '0.875rem',
+                        lineHeight: '1.7'
+                      }}
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code className="bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded text-sm font-mono text-stone-700 dark:text-stone-300" {...props}>
+                      {children}
+                    </code>
+                  );
+                }
+              }}
+            >
+              {article.content}
+            </ReactMarkdown>
+          </div>
+        ) : (
+          <div className="text-center py-16 text-stone-400 dark:text-stone-500">
+            <p className="text-sm tracking-wider">{t('article.noContent')}</p>
+          </div>
+        )}
       </article>
 
       {/* 标签 */}

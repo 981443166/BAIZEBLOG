@@ -197,6 +197,7 @@ function ProfilePage() {
                       src={profileData.avatar} 
                       alt="头像" 
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <span className="text-2xl font-serif text-stone-500 dark:text-stone-400">

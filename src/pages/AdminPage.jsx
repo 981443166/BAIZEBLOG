@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 
 function AdminPage() {
   const { t } = useTranslation();
@@ -39,7 +40,10 @@ function AdminPage() {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/articles');
+      const token = localStorage.getItem('token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const response = await fetch('http://localhost:3001/api/articles', { headers });
       const data = await response.json();
       setArticles(data.articles || []);
     } catch (error) {
@@ -85,17 +89,37 @@ function AdminPage() {
   };
 
   // 打开编辑弹窗
-  const handleEdit = (article) => {
+  const handleEdit = async (article) => {
     setEditingArticle(article);
-    setFormData({
-      title: article.title,
-      category: article.category,
-      excerpt: article.excerpt || '',
-      content: article.content || '',
-      coverImage: article.cover_image || '',
-      readTime: article.read_time || 8,
-      status: article.status || 'published'
-    });
+    // 从 API 获取完整文章内容（列表 API 可能不含 content）
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`http://localhost:3001/api/articles/${article.id}`, { headers });
+      const data = await res.json();
+      const full = data.article || article;
+      setFormData({
+        title: full.title || '',
+        category: full.category || '',
+        excerpt: full.excerpt || '',
+        content: full.content || '',
+        coverImage: full.cover_image || '',
+        readTime: full.read_time || 8,
+        status: full.status || 'published'
+      });
+    } catch {
+      // fallback 到列表数据
+      setFormData({
+        title: article.title || '',
+        category: article.category || '',
+        excerpt: article.excerpt || '',
+        content: article.content || '',
+        coverImage: article.cover_image || '',
+        readTime: article.read_time || 8,
+        status: article.status || 'published'
+      });
+    }
     setShowModal(true);
   };
 
@@ -454,6 +478,7 @@ function AdminPage() {
                           src={formData.coverImage.startsWith('/uploads') ? `http://localhost:3001${formData.coverImage}` : formData.coverImage} 
                           alt="封面预览" 
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                         <button
                           type="button"

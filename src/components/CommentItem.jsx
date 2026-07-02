@@ -136,6 +136,7 @@ function CommentItem({ comment, articleId, onReply, onDelete, currentUserId, isR
                 src={comment.user_avatar} 
                 alt={comment.user_name} 
                 className="w-full h-full rounded-full object-cover"
+                loading="lazy"
               />
             ) : (
               <span className="text-sm font-serif text-stone-500">
